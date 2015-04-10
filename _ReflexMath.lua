@@ -15,7 +15,7 @@ local canPickup = function(player, itemType)
             or player.armor < 200
     elseif itemType == PICKUP_TYPE_ARMOR100 then
         return player.armorProtection == 2 and player.armor < 133
-            or player.armorProtection == 1 and player.armor < 150
+            or player.armor < 150
     elseif itemType == PICKUP_TYPE_ARMOR50 then
         return player.armorProtection == 2 and player.armor < 66
             or player.armorProtection == 1 and player.armor < 75
@@ -43,7 +43,7 @@ local pickup = function(player, itemType)
         }
     elseif itemType == PICKUP_TYPE_ARMOR150 then
         return {
-            armorProtection = 1,
+            armorProtection = 2,
             armor = math.min(200, player.armor + 150),
             health = player.health
         }
