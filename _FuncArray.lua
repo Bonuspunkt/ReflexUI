@@ -73,6 +73,20 @@ local function FuncArray(array)
             return newArray
         end,
 
+        concat = function(otherArray)
+            local result = {}
+            for i = 1, #array do
+                add(result, array[i])
+            end
+
+            if otherArray.raw then otherArray = otherArray.raw end
+            for j = 1, #otherArray do
+                add(result, otherArray[j])
+            end
+
+            return FuncArray(result)
+        end,
+
         -- escape the fancyness
         raw = array
     }
