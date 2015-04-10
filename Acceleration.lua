@@ -1,9 +1,15 @@
 require "base/internal/ui/reflexcore"
+local Averager = require "base/internal/ui/bonus/_Averager"
 
-local barHeight = 50;
-local barColor = Color(255,255,255,255);
-local oldSpeed = 0;
-local multiplier = 10;
+-- config
+local barHeight = 50
+local barColor = Color(255,255,255,255)
+local oldSpeed = 0
+local multiplier = 10
+local averageDuration = 10
+
+--
+local avg = Averager(averageDuration)
 
 Acceleration =
 {
@@ -17,9 +23,12 @@ Acceleration =
         local speed = player.speed;
 
         local deltaSpeed = speed - oldSpeed;
+
+        avg.add(deltaSpeed);
+        deltaSpeed = avg.get();
+
         local barWidth = deltaSpeed * multiplier;
 
-        nvgFillColor(barColor);
         nvgBeginPath();
 
 
@@ -41,6 +50,7 @@ Acceleration =
             );
         end
 
+        nvgFillColor(barColor);
         nvgFill()
 
         oldSpeed = speed;

@@ -15,10 +15,31 @@ return {
     end,
 
     drawMega = function(x, y, size, hasMega)
-        if not hasMega then return end
+        local healthColor
+        if hasMega then
+            healthColor = Color(60,80,255)
+        else
+            healthColor = Color(64,64,64)
+        end
+
         nvgSave()
-        nvgFillColor(Color(60,80,255));
+        nvgFillColor(healthColor);
         nvgSvg("internal/ui/icons/health", x, y, size)
+        nvgRestore()
+    end,
+
+    drawCarnage = function(x, y, size, carnageTimer)
+        if carnageTimer <= 0 then return end
+        nvgSave()
+        nvgFillColor(Color(255,120,128))
+        nvgSvg("internal/ui/icons/carnage", x, y, size)
+        nvgRestore()
+    end,
+
+    drawWeapon = function(x, y, size, weaponIndex, weaponColor) -- would prefeer weaponIndex but weapons if on player
+        nvgSave()
+        nvgFillColor(weaponColor);
+        nvgSvg("internal/ui/icons/weapon" .. weaponIndex, x, y, size);
         nvgRestore()
     end
 }

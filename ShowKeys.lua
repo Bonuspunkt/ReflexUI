@@ -2,8 +2,6 @@ require "base/internal/ui/reflexcore"
 
 ShowKeys =
 {
-    canPosition = false,
-
     draw = function()
 
         -- no player => no crosshair
