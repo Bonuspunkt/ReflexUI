@@ -1,4 +1,4 @@
-require "base/internal/ui/reflexcore"
+local Color = require "base/internal/ui/bonus/_Color"
 
 local armorColors = {
     Color(0, 255, 0, 255),
@@ -7,9 +7,15 @@ local armorColors = {
 }
 
 return {
-    drawArmor = function(x, y, size, armorProtection)
+    drawArmor = function(x, y, size, armorProtection, lerpColor)
+        local color = armorColors[armorProtection + 1];
+
+        if lerpColor then
+            color = color.lerp(lerpColor, .75)
+        end
+
         nvgSave()
-        nvgFillColor(armorColors[armorProtection + 1]);
+        nvgFillColor(color);
         nvgSvg("internal/ui/icons/armor", x, y, size)
         nvgRestore()
     end,

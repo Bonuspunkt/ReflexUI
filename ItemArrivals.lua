@@ -1,7 +1,7 @@
-require "base/internal/ui/reflexcore"
 local FuncArray = require "base/internal/ui/bonus/_FuncArray"
 local Icons = require "base/internal/ui/bonus/_Icons"
 local ReflexMath = require "base/internal/ui/bonus/_ReflexMath"
+local Color = require "base/internal/ui/bonus/_Color"
 
 -- config
 local lineHeight = 50
@@ -38,7 +38,6 @@ ItemArrivals =
                             respawn = pickup.timeUntilRespawn,
                             type = pickup.type,
                             canSpawn = pickup.canSpawn,
-                            priority = ReflexMath.priority(player, pickup.type),
                             priority = ReflexMath.priorize(player, pickup.type),
                             canPickup = ReflexMath.canPickup(player, pickup.type)
                         }
@@ -61,14 +60,14 @@ ItemArrivals =
                     Icons.drawCarnage(-100, lineHeight * i, iconSize, 1)
                 elseif pickup.type < 50 then
                     Icons.drawMega(-100, lineHeight * i, iconSize, pickup.canSpawn)
-                elseif not pickup.canPickup then
-                    nvgSave()
-                    nvgFillColor(Color(64,64,64));
-                    nvgSvg("internal/ui/icons/armor", -100, lineHeight * i, iconSize)
-                    nvgRestore()
                 else
-                    Icons.drawArmor(-100, lineHeight * i, iconSize, pickup.type - PICKUP_TYPE_ARMOR50)
+                    local lerpColor
+                    if not pickup.canPickup then
+                        lerpColor = Color(0,0,0)
+                    end
+                    Icons.drawArmor(-100, lineHeight * i, iconSize, pickup.type - PICKUP_TYPE_ARMOR50, lerpColor)
                 end
+
                 if pickup.index > 1 then
                     nvgFontSize(fontSize);
                     nvgText(-100 + iconSize/2, lineHeight * i + iconSize/2, pickup.index)
@@ -80,7 +79,7 @@ ItemArrivals =
                 elseif pickup.canSpawn then
                     time = "-"
                 else
-                    time = "hold"
+                    time = "held"
                 end
                 nvgFontSize(fontSize);
                 nvgText(0, lineHeight * i,  time)
