@@ -19,7 +19,7 @@ local canPickup = function(player, itemType)
     elseif itemType == PICKUP_TYPE_ARMOR50 then
         return player.armorProtection == 2 and player.armor < 66
             or player.armorProtection == 1 and player.armor < 75
-            or player.armor < 100
+            or player.armorProtection == 0 and player.armor < 100
     elseif itemType == PICKUP_TYPE_POWERUPCARNAGE then
         return player.carnageTimer == 0
     end
