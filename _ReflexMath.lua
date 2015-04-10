@@ -15,7 +15,7 @@ local canPickup = function(player, itemType)
             or player.armor < 200
     elseif itemType == PICKUP_TYPE_ARMOR100 then
         return player.armorProtection == 2 and player.armor < 133
-            or player.armor < 150
+            or player.armorProtection ~= 2 and player.armor < 150
     elseif itemType == PICKUP_TYPE_ARMOR50 then
         return player.armorProtection == 2 and player.armor < 66
             or player.armorProtection == 1 and player.armor < 75
@@ -62,8 +62,16 @@ local pickup = function(player, itemType)
     end
 end
 
+local priorize = function(player, itemType)
+    if itemType == PICKUP_TYPE_POWERUPCARNAGE then
+        return 401;
+    end
+    return trueHealth(pickup(player, itemType))
+end
+
 return {
     trueHealth = trueHealth,
     canPickup = canPickup,
-    pickup = pickup
+    pickup = pickup,
+    priorize = priorize
 }

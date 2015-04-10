@@ -7,6 +7,7 @@ local ReflexMath = require "base/internal/ui/bonus/_ReflexMath"
 local lineHeight = 50
 local iconPadding = 3
 local fontSize = 50
+local showTrueStack = true
 
 local function getPriority()
     local player = getPlayer()
@@ -37,9 +38,8 @@ ItemArrivals =
                             respawn = pickup.timeUntilRespawn,
                             type = pickup.type,
                             canSpawn = pickup.canSpawn,
-                            priority = ReflexMath.trueHealth(
-                                ReflexMath.pickup(player, pickup.type)
-                            ),
+                            priority = ReflexMath.priority(player, pickup.type),
+                            priority = ReflexMath.priorize(player, pickup.type),
                             canPickup = ReflexMath.canPickup(player, pickup.type)
                         }
                     end)
@@ -48,18 +48,18 @@ ItemArrivals =
                 return prev.concat(curr)
             end,  FuncArray({}))
             .sort(function(a, b)
-                if a.canPickup and not b.canPickup then
-                    return true
-                elseif not a.canPickup and b.canPickup then
-                    return false
-                elseif a.timeUntilRespawn == b.timeUntilRespawn then
+                if (a.priority ~= b.priority) then
                     return a.priority > b.priority
+                elseif (a.type ~= b.type) then
+                    return a.type > b.type
                 end
-                return a.timeUntilRespawn > b.timeUntilRespawn
+                return a.index < b.index
             end)
             .forEach(function(pickup, i)
 
-                if pickup.type < 50 then
+                if pickup.type == 60 then
+                    Icons.drawCarnage(-100, lineHeight * i, iconSize, 1)
+                elseif pickup.type < 50 then
                     Icons.drawMega(-100, lineHeight * i, iconSize, pickup.canSpawn)
                 elseif not pickup.canPickup then
                     nvgSave()
@@ -84,6 +84,10 @@ ItemArrivals =
                 end
                 nvgFontSize(fontSize);
                 nvgText(0, lineHeight * i,  time)
+
+                if showTrueStack then
+                    nvgText(150, lineHeight * i,  pickup.priority)
+                end
             end)
 
     end
