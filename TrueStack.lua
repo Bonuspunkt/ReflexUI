@@ -1,4 +1,5 @@
 require "base/internal/ui/reflexcore"
+local reflexMath = require "base/internal/ui/bonus/_ReflexMath"
 
 TrueStack =
 {
@@ -18,13 +19,8 @@ TrueStack =
         nvgFontBlur(0);
         nvgFillColor(textColor);
 
-        local armorProtection = player.armorProtection + 1;
 
-        local maxDamage =
-            math.min(player.armor, player.health * armorProtection) +
-            player.health;
-
-        nvgText(0, 0, maxDamage);
+        nvgText(0, 0, reflexMath.trueStack(player));
     end
 };
 registerWidget("TrueStack");
