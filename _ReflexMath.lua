@@ -76,7 +76,6 @@ end
 
 local receiveDamage = function(player, damage)
     local armorDamage = damage * (1 - (1/(player.armorProtection + 2)));
-    consolePrint(armorDamage)
     local armorAbsorbs = round(math.min(
         player.armor,
         armorDamage
