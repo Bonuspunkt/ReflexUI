@@ -1,6 +1,6 @@
 require "base/internal/ui/reflexcore"
 
-local trueHealth = function(player)
+local trueStack = function(player)
     return math.min(
             player.armor,
             player.health * (player.armorProtection + 1)
@@ -55,23 +55,44 @@ local pickup = function(player, itemType)
         }
     elseif itemType == PICKUP_TYPE_ARMOR50 then
         return {
-                armorProtection = 0,
-                armor = math.min(100, player.armor + 50),
-                health = player.health
-            }
+            armorProtection = 0,
+            armor = math.min(100, player.armor + 50),
+            health = player.health
+        }
     end
+end
+
+function round(num, idp)
+  local mult = 10^(idp or 0)
+  return math.floor(num * mult + 0.5) / mult
 end
 
 local priorize = function(player, itemType)
     if itemType == PICKUP_TYPE_POWERUPCARNAGE then
         return 401;
     end
-    return trueHealth(pickup(player, itemType))
+    return trueStack(pickup(player, itemType))
+end
+
+local receiveDamage = function(player, damage)
+    local armorDamage = damage * (1 - (1/(player.armorProtection + 2)));
+    consolePrint(armorDamage)
+    local armorAbsorbs = round(math.min(
+        player.armor,
+        armorDamage
+    ));
+
+    return {
+        armorProtection = player.armorProtection,
+        armor = player.armor - armorAbsorbs,
+        health = player.health - (damage - armorAbsorbs)
+    }
 end
 
 return {
-    trueHealth = trueHealth,
+    trueStack = trueStack,
     canPickup = canPickup,
     pickup = pickup,
-    priorize = priorize
+    priorize = priorize,
+    receiveDamage = receiveDamage
 }
