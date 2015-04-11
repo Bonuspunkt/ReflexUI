@@ -15,6 +15,8 @@ __PatchMenu =
         MenuBar.draw = function()
             draw(MenuBar);
 
+            if MenuBar.visibility <= 0 then return end
+
             if uiMenuBarButton("WIDGETS", 300, -540, 200, 100, 255) then
                 setMenuStack("WidgetMenu");
             end
