@@ -21,17 +21,80 @@ local function drawWidget(x, y, index, item, isSelected, mouse, itemWidth, itemH
     return mouse.leftUp;
 end
 
+local function uiAlign(x, y, width, height, value)
+    local baseColor = Color(255,255,255, 32)
+    local activeColor = Color(255,255,255,192)
+    local selectedColor = Color(255,127,127,192)
+
+    local m;
+    local stepWidth = width / 3
+    local stepHeight = height / 3
+    for i = 0, 2, 1 do
+        for j = 0, 2, 1 do
+
+            m = mouseRegion(x + i * stepWidth, y + j * stepHeight, stepWidth, stepHeight, i * 3 + j)
+
+            nvgBeginPath()
+            nvgRect(x + i * stepWidth, y + j * stepHeight, stepWidth, stepHeight)
+            if value.x == i-1 and value.y == j-1 then
+                nvgFillColor(selectedColor)
+            else
+                nvgFillColor(baseColor.lerp(activeColor, m.hoverAmount))
+            end
+            nvgFill();
+
+            if m.leftUp then
+                return { x = i - 1, y = j - 1 }
+            end
+
+        end
+    end
+    return value
+end
+
 local function generateControls(itemDefinition, x, y, value)
     if itemDefinition.type == "align" then
-        return y + 10, value
+        nvgText(x, y, itemDefinition.name);
+        value = uiAlign(x, y + 20, 60, 60, value)
+        return y + 90, value
 
     elseif itemDefinition.type == "checkbox" then
-        return y + 10, uiCheckBox(value, itemDefinition.name, x, y)
+        nvgSave()
+        -- uiCheckbox leaks color
+        value = uiCheckBox(value, itemDefinition.name, x, y)
+        nvgRestore()
+
+        return y + 50, value
 
     elseif itemDefinition.type == "color" then
+        nvgFillColor(Color(200,200,200))
+        nvgText(x, y, itemDefinition.name);
+        y = y + 30
+
+        nvgText(x, y, "R")
+        value.r =uiSlider(x + 30, y, 400, 0, 255, value.r);
+        y = y + 30
+
+        nvgText(x, y, "G")
+        value.g = uiSlider(x + 30, y, 400, 0, 255, value.g);
+        y = y + 30
+
+        nvgText(5, y, "B")
+        value.b = uiSlider(x + 30, y, 400, 0, 255, value.b);
+        y = y + 30
+
+        nvgSave()
+
+        nvgBeginPath();
+        nvgRect(450, y - 120, 120, 120);
+        nvgFillColor(value);
+        nvgFill()
+
+        nvgRestore()
+
         return y, value
     end
-    consolePrint('no match')
+    consolePrint('no match for type ' .. itemDefinition.type)
 end
 
 local selectedWidget
@@ -98,8 +161,6 @@ WidgetMenu =
         for key, definition in pairs(selectedWidget.configDefinition) do
             value = selectedWidget.config[definition.name]
             y, value = generateControls(definition, 5, y, value)
-
-            consolePrint(key .. " value: " .. (value and 'true' or 'false'))
 
             selectedWidget.config[definition.name] = value
         end
