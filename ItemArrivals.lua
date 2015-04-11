@@ -75,7 +75,7 @@ ItemArrivals =
 
                 local time
                 if pickup.respawn ~= 0 then
-                    time = math.floor(pickup.respawn / 1000)
+                    time = math.ceil(pickup.respawn / 1000)
                 elseif pickup.canSpawn then
                     time = "-"
                 else
