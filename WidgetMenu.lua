@@ -90,6 +90,10 @@ local function generateControls(itemDefinition, x, y, value)
         value.b = uiSlider(x + 30, y, 400, 0, 255, value.b);
         y = y + 30
 
+        nvgText(5, y, "A")
+        value.a = uiSlider(x + 30, y, 400, 0, 255, value.a);
+        y = y + 30
+
         nvgSave()
 
         nvgBeginPath();
