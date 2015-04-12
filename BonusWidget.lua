@@ -1,7 +1,17 @@
---require "base/internal/ui/reflexcore"
+local registry = require "base/internal/ui/bonus/widgetRegistry"
 
-BonusWidget =
+local config = {
+    visible = false,
+    align = { x = 0, y = 0 },
+    textColor = Color(255,255,255)
+}
+
+
+local bonusWidget =
 {
+    name = "Bonus Widget",
+    description = "Sample proof of concept",
+
     canHide = false,
 
     configDefinition = {
@@ -10,14 +20,11 @@ BonusWidget =
         { name = "textColor", type = "color" }
     },
 
-    config = {
-        visible = false,
-        align = { x = 0, y = 0 },
-        textColor = Color(255,255,255)
-    },
+    getConfig = function() return config end,
+    setConfig = function(newConfig) config = newConfig end,
 
     draw = function()
-        local config = BonusWidget.config
+        --consolePrint("draw: " .. bonusWidget.name)
 
         if not config.visible then return end
 
@@ -50,4 +57,4 @@ BonusWidget =
         nvgText(x, y, "BonusWidget POC")
     end
 };
-registerWidget("BonusWidget");
+registry.register(bonusWidget);

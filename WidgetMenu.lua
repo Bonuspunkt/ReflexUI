@@ -1,12 +1,16 @@
 local FuncArray = require "base/internal/ui/bonus/_FuncArray"
 local Color = require "base/internal/ui/bonus/_Color"
+local registry = require "base/internal/ui/bonus/widgetRegistry"
 
-local function drawWidget(x, y, index, item, isSelected, mouse, itemWidth, itemHeight)
+local function drawWidgetListItem(x, y, index, item, isSelected, mouse, itemWidth, itemHeight)
     nvgSave()
+    nvgFontFace(FONT_TEXT_BOLD)
+    nvgTextAlign(NVG_ALIGN_LEFT, NVG_ALIGN_TOP)
 
-    nvgFontSize(FONT_SIZE_SMALL);
-    nvgFontFace(FONT_TEXT_BOLD);
-    nvgTextAlign(NVG_ALIGN_LEFT, NVG_ALIGN_MIDDLE);
+    nvgBeginPath()
+    nvgRect(x,y,itemWidth, itemHeight);
+    nvgFillColor(Color(0, 0, 0, 0).lerp(Color(0,0,0, 64), mouse.hoverAmount))
+    nvgFill()
 
     if isSelected then
         nvgFillColor(Color(255, 127, 127))
@@ -14,7 +18,10 @@ local function drawWidget(x, y, index, item, isSelected, mouse, itemWidth, itemH
         nvgFillColor(Color(255, 255, 255).lerp(Color(255,255,0), mouse.hoverAmount))
     end
 
-    nvgText(x+10, y + itemHeight / 2 + 1, item.name);
+    nvgFontSize(FONT_SIZE_DEFAULT)
+    nvgText(x+10, y, item.name);
+    nvgFontSize(FONT_SIZE_SMALL)
+    nvgText(x+10, y + itemHeight/ 2 - 3, item.description or '');
 
     nvgRestore()
 
@@ -109,35 +116,19 @@ WidgetMenu =
 
         uiWindow("WIDGETS", -600, -400, 1200, 800);
 
+        local widgetList = widgetRegistry.getList()
+
         -- copy widgetList
-        local widgets = {}
-        for key,value in pairs(_G) do
-            if type(value) == 'table' and value.draw then
-                value.name = key
-                widgets[#widgets + 1] = value
-            end
-        end
-        local filteredWidgets = FuncArray(widgets)
-            .filter(function(w)
-                return w.isMenu ~= true
-                    -- and w.canHide ~= false -- we removed this to work around ui_show_widget
-            end)
-            .sort(function(a, b)
-                return a.name < b.name
-            end).raw
-
-        --selectedWidget = filteredWidgets[1]
-
         selectedWidget = uiScrollSelection(
-            filteredWidgets,
+            widgetList,
             selectedWidget,
             -590,
             -350,
             585,
             740,
             scrollBarData,
-            40,
-            drawWidget
+            50,
+            drawWidgetListItem
         )
 
         nvgFontSize(FONT_SIZE_SMALL);
@@ -157,12 +148,22 @@ WidgetMenu =
         end
 
         local value
+        local config
+        if selectedWidget.config then
+            config = selectedWidget.config
+        elseif selectedWidget.getConfig then
+            config = selectedWidget:getConfig()
+        else
+            consolePrint("NO CONFIG FOUND")
+        end
+
         local y = -350
-        for key, definition in pairs(selectedWidget.configDefinition) do
-            value = selectedWidget.config[definition.name]
+        for key, definition in pairs(configDefinition) do
+            value = config[definition.name]
+
             y, value = generateControls(definition, 5, y, value)
 
-            selectedWidget.config[definition.name] = value
+            config[definition.name] = value
         end
     end
 }
