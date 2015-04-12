@@ -1,9 +1,12 @@
 local registry = require "base/internal/ui/bonus/widgetRegistry"
+local color = require "base/internal/ui/bonus/lib/color"
+local nvg = require "base/internal/ui/bonus/nvg"
+local const = require "base/internal/ui/bonus/const"
 
 local config = {
     visible = false,
     align = { x = 0, y = 0 },
-    textColor = Color(255,255,255)
+    textColor = color.new(255,255,255)
 }
 
 
@@ -28,33 +31,33 @@ local bonusWidget =
 
         if not config.visible then return end
 
-        nvgFontSize(64);
-        nvgFontFace(FONT_TEXT_BOLD)
-        nvgFillColor(config.textColor)
+        nvg.fontSize(64);
+        nvg.fontFace(const.font.textBold)
+        nvg.fillColor(config.textColor)
 
-        local hAlign = NVG_ALIGN_CENTER
-        local vAlign = NVG_ALIGN_MIDDLE
+        local hAlign = nvg.const.hAlign.center
+        local vAlign = nvg.const.vAlign.middle
         local x = 0
         local y = 0
 
         if config.align.x == -1 then
-            x = -viewport.width / 2
-            hAlign = NVG_ALIGN_LEFT
+            x = -_G.viewport.width / 2
+            hAlign = nvg.const.hAlign.left
         elseif config.align.x == 1 then
-            x = viewport.width / 2
-            hAlign = NVG_ALIGN_RIGHT
+            x = _G.viewport.width / 2
+            hAlign = nvg.const.hAlign.right
         end
 
         if config.align.y == -1 then
-            y = -viewport.height / 2 + 100 -- +100 for top menu bar
-            vAlign = NVG_ALIGN_TOP
+            y = -_G.viewport.height / 2 + 100 -- +100 for top menu bar
+            vAlign = nvg.const.vAlign.top
         elseif config.align.y == 1 then
-            y = viewport.height / 2
-            vAlign = NVG_ALIGN_BOTTOM
+            y = _G.viewport.height / 2
+            vAlign = nvg.const.vAlign.bottom
         end
 
-        nvgTextAlign(hAlign, vAlign)
-        nvgText(x, y, "BonusWidget POC")
+        nvg.textAlign(hAlign, vAlign)
+        nvg.text(x, y, "BonusWidget POC")
     end
 };
 registry.register(bonusWidget);
