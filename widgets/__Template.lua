@@ -1,9 +1,9 @@
 --require "base/internal/ui/reflexcore"
 
-__Template =
+_G.__Template =
 {
     draw = function()
-        --consolePrint("drawing")
+        --_G.consolePrint("drawing")
     end
 };
-registerWidget("__Template");
+_G.registerWidget("__Template");
