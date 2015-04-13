@@ -166,13 +166,21 @@ _G.WidgetMenu =
     end
 
     local y = -350
+    local newConfig = {}
     for _, definition in pairs(configDefinition) do
       value = config[definition.name]
 
       y, value = generateControls(definition, 5, y, value)
 
-      config[definition.name] = value
+      newConfig[definition.name] = value
     end
+
+    if selectedWidget.setConfig then
+      selectedWidget.setConfig(newConfig)
+    else
+      selectedWidget.config = newConfig
+    end
+
   end
 }
 _G.registerWidget("WidgetMenu");
