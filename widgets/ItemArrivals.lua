@@ -10,6 +10,7 @@ local lineHeight = 50
 local iconPadding = 3
 local fontSize = 50
 local showTrueStack = true
+local itemHero = true
 -- todo: sorting
 
 _G.ItemArrivals =
@@ -25,13 +26,27 @@ _G.ItemArrivals =
 
     nvg.textAlign(nvg.const.hAlign.center, nvg.const.vAlign.middle);
 
+    if itemHero then
+      nvg.beginPath()
+      nvg.rect(
+        -100 - lineHeight/2 + iconPadding,
+        lineHeight - iconSize,
+        iconSize * 2,
+        #_G.pickupTimers * lineHeight)
+      nvg.fillColor(color.new(0,0,0,64))
+      nvg.fill()
+    end
+
     funcArray(_G.pickupTimers)
       .groupBy(function(pickup) return pickup.type end)
       .map(function(group)
         return group.values.map(
-          function(pickup, i)
+          function(pickup, i, array)
+            local index = i
+            if #array == 1 then index = 0 end
+
             return {
-              index = i,
+              index = index,
               respawn = pickup.timeUntilRespawn,
               type = pickup.type,
               canSpawn = pickup.canSpawn,
@@ -53,23 +68,6 @@ _G.ItemArrivals =
       end)
       .forEach(function(pickup, i)
 
-        if pickup.type == 60 then
-          icons.drawCarnage(-100, lineHeight * i, iconSize, 1)
-        elseif pickup.type < 50 then
-          icons.drawMega(-100, lineHeight * i, iconSize, pickup.canSpawn)
-        else
-          local lerpColor
-          if not pickup.canPickup then
-            lerpColor = color.new(0,0,0)
-          end
-          icons.drawArmor(-100, lineHeight * i, iconSize, pickup.type - const.pickupType.armor50, lerpColor)
-        end
-
-        if pickup.index > 1 then
-          nvg.fontSize(fontSize);
-          nvg.text(-100 + iconSize/2, lineHeight * i + iconSize/2, pickup.index)
-        end
-
         local time
         if pickup.respawn ~= 0 then
           time = math.ceil(pickup.respawn / 1000)
@@ -78,8 +76,38 @@ _G.ItemArrivals =
         else
           time = "held"
         end
+        nvg.fillColor(color.new(255,255,255, 64))
         nvg.fontSize(fontSize);
-        nvg.text(0, lineHeight * i,  time)
+        nvg.textAlign(nvg.const.hAlign.right, nvg.const.vAlign.middle)
+        nvg.text(-130, lineHeight * i,  time)
+
+
+        local x = -100
+        if itemHero then x = x + pickup.respawn/50 end
+
+        if pickup.type == 60 then
+          icons.drawCarnage(x, lineHeight * i, iconSize, 1)
+        elseif pickup.type < 50 then
+          icons.drawMega(x, lineHeight * i, iconSize, pickup.canSpawn)
+        else
+          local lerpColor
+          if not pickup.canPickup then
+            lerpColor = color.new(0,0,0)
+          end
+          icons.drawArmor(x, lineHeight * i, iconSize, pickup.type - const.pickupType.armor50, lerpColor)
+        end
+
+        if pickup.index > 0 then
+          _G.nvgSave()
+          for blur, usedColor in pairs({color.new(0,0,0), color.new(255,255,255)}) do
+            nvg.fillColor(usedColor)
+            nvg.fontBlur((2 - blur) * 10)
+            nvg.fontSize(fontSize * 2 / 3);
+            nvg.textAlign(nvg.const.hAlign.center, nvg.const.vAlign.middle)
+            nvg.text(x + iconSize/2, lineHeight * i + iconSize/2, pickup.index)
+          end
+          _G.nvgRestore()
+        end
 
         if showTrueStack then
           nvg.text(150, lineHeight * i,  pickup.priority)
