@@ -40,7 +40,7 @@ return {
   drawCarnage = function(x, y, size, carnageTimer)
     if carnageTimer <= 0 then return end
     _G.nvgSave()
-    _G.nvgFillColor(color(255,120,128))
+    _G.nvgFillColor(color.new(255,120,128))
     _G.nvgSvg("internal/ui/icons/carnage", x, y, size)
     _G.nvgRestore()
   end,
