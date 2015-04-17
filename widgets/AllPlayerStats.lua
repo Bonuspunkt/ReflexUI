@@ -1,20 +1,23 @@
 require "base/internal/ui/reflexcore"
-local FuncArray = require "base/internal/ui/bonus/_FuncArray"
-local Icons = require "base/internal/ui/bonus/_Icons"
+local color = require "base/internal/ui/bonus/lib/color"
+local funcArray = require "base/internal/ui/bonus/lib/funcArray"
+local icons = require "base/internal/ui/bonus/lib/icons"
+local const = require "base/internal/ui/bonus/const"
+local nvg = require "base/internal/ui/bonus/nvg"
 
 -- config
 local spacing = 32
 local lineHeight = 40
 local fontSize = 48
 local iconPadding = 5
-local highlightColor = Color(255,0,0,64)
+local highlightColor = color.new(255,0,0,64)
 
 -- gibberish
-local properties = FuncArray({
+local properties = funcArray({
     { name = "name" },
-    { name = "hasMega", width = 32, draw = Icons.drawMega },
+    { name = "hasMega", width = 32, draw = icons.drawMega },
     { name = "health", width = 60 },
-    { name = "armorProtection", width = 32, draw = Icons.drawArmor },
+    { name = "armorProtection", width = 32, draw = icons.drawArmor },
     { name = "armor", width =  60 },
     { name = "score", 60 },
     {
@@ -26,36 +29,36 @@ local properties = FuncArray({
     }
 })
 
-function getEmpty()
+local function getEmpty()
     return properties.reduce(function(prev, property)
         prev[property.name] = 0
         return prev
     end, {})
 end
 
-function get(table, property)
-    local value;
+local function get(table, property)
     if property.get then
         return property.get(table)
     end
     return table[property.name]
 end
 
-AllPlayerStats =
+_G.AllPlayerStats =
 {
     draw = function()
 
-        local myself = getLocalPlayer();
-        local specingPlayer = getPlayer();
+        local myself = _G.getLocalPlayer();
+        local specingPlayer = _G.getPlayer();
 
         -- only display if we are spectating
-        if myself.state ~= PLAYER_STATE_SPECTATOR then return end
+        if not myself
+          or myself.state ~= const.playerState.spectator then return end
 
-        nvgFontSize(fontSize);
+        nvg.fontSize(fontSize);
 
-        local activePlayers = FuncArray(players)
+        local activePlayers = funcArray(_G.players)
             .filter(function(player)
-                return player.state == PLAYER_STATE_INGAME
+                return player.state == const.playerState.ingame
                    and player.connected
             end)
             .map(function(player)
@@ -78,7 +81,7 @@ AllPlayerStats =
                     if property.width ~= nil then
                         currWidth = property.width
                     else
-                        currWidth = nvgTextWidth(player[property.name])
+                        currWidth = nvg.textWidth(player[property.name])
                     end
                     local prevWidth = prev[property.name];
                     if prevWidth < currWidth then
@@ -96,43 +99,43 @@ AllPlayerStats =
         activePlayers
             .forEach(function(player, i)
                 if player == specingPlayer then
-                    nvgFillColor(highlightColor);
-                    nvgBeginPath();
-                    nvgRoundedRect(
+                    nvg.fillColor(highlightColor);
+                    nvg.beginPath();
+                    nvg.roundedRect(
                         -totalWidth / 2,
                         (i - .5) * lineHeight,
                         totalWidth,
                         lineHeight, 5)
-                    nvgFill()
+                    nvg.fill()
                 end
 
-                nvgTextAlign(NVG_ALIGN_RIGHT, NVG_ALIGN_MIDDLE)
-                nvgFillColor(Color(255,255,255));
+                nvg.textAlign(nvg.const.hAlign.right, nvg.const.vAlign.middle)
+                nvg.fillColor(color.new(255,255,255));
 
                 local x = -totalWidth / 2 + maxWidths.name + 25
                 local y = lineHeight * i
 
-                nvgText(x, y, player.name);
+                nvg.text(x, y, player.name);
 
                 if player.health <= 0 then
-                    nvgTextAlign(NVG_ALIGN_CENTER, NVG_ALIGN_MIDDLE)
+                    nvg.textAlign(nvg.const.hAlign.center, nvg.const.vAlign.middle)
                     x = (maxWidths.name + spacing/2) / 2
-                    nvgText(x, y, "DEAD")
+                    nvg.text(x, y, "DEAD")
                     return
                 end
 
-                properties.forEach(function(property, i)
-                    if i < 2 then return end -- skip player name
+                properties.forEach(function(property, j)
+                    if j < 2 then return end -- skip player name, we already have drawn that
 
                     x = x + maxWidths[property.name] + spacing;
                     if property.draw then
                         property.draw(x, y, lineHeight/2 - iconPadding, player[property.name])
                     else
-                        nvgText(x, y, player[property.name]);
+                        nvg.text(x, y, player[property.name]);
                     end
                 end)
             end)
 
     end
 };
-registerWidget("AllPlayerStats");
+_G.registerWidget("AllPlayerStats");
