@@ -1,3 +1,4 @@
+local nvg = require "../nvg"
 local color = require "base/internal/ui/bonus/lib/color"
 
 local armorColors = {
@@ -15,10 +16,10 @@ return {
       armorColor = color.lerp(armorColor, lerpColor, .75)
     end
 
-    _G.nvgSave()
-    _G.nvgFillColor(armorColor);
-    _G.nvgSvg("internal/ui/icons/armor", x, y, size)
-    _G.nvgRestore()
+    nvg.save()
+    nvg.fillColor(armorColor);
+    nvg.svg(x, y, "internal/ui/icons/armor", size)
+    nvg.restore()
   end,
 
   -- TODO: replace params with table
@@ -30,26 +31,26 @@ return {
       healthColor = color.new(64,64,64)
     end
 
-    _G.nvgSave()
-    _G.nvgFillColor(healthColor);
-    _G.nvgSvg("internal/ui/icons/health", x, y, size)
-    _G.nvgRestore()
+    nvg.save()
+    nvg.fillColor(healthColor);
+    nvg.svg(x, y, "internal/ui/icons/health", size)
+    nvg.restore()
   end,
 
   -- TODO: replace params with table
   drawCarnage = function(x, y, size, carnageTimer)
     if carnageTimer <= 0 then return end
-    _G.nvgSave()
-    _G.nvgFillColor(color.new(255,120,128))
-    _G.nvgSvg("internal/ui/icons/carnage", x, y, size)
-    _G.nvgRestore()
+    nvg.save()
+    nvg.fillColor(color.new(255,120,128))
+    nvg.svg(x, y, "internal/ui/icons/carnage", size)
+    nvg.restore()
   end,
 
   -- TODO: replace params with table
   drawWeapon = function(x, y, size, weaponIndex, weaponColor) -- would prefeer only weaponIndex but weapons if on player
-    _G.nvgSave()
-    _G.nvgFillColor(weaponColor);
-    _G.nvgSvg("internal/ui/icons/weapon" .. weaponIndex, x, y, size);
-    _G.nvgRestore()
+    nvg.save()
+    nvg.fillColor(weaponColor);
+    nvg.svg(x, y, "internal/ui/icons/weapon" .. weaponIndex, size);
+    nvg.restore()
   end
 }
