@@ -1,5 +1,8 @@
 # ReflexUI
 
+## DON'T INSTALL IF YOU HAVE 0.33.4
+the behviour of `require` in Reflex changed and i need to come up with a decent solution for development and dristribution
+
 ## installation
 - on the right side is download zip button
 - extract the content to `<steam>\steamapps\common\Reflex\base\internal\ui` and rename `ReflexUI-master` to `bonus`
