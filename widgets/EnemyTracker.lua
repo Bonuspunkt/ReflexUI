@@ -1,5 +1,6 @@
 --require "base/internal/ui/reflexcore"
 local reflexMath = require "base/internal/ui/bonus/lib/reflexMath"
+local nvg = require "../nvg"
 
 local otherPlayer;
 local oldMe;
@@ -71,12 +72,12 @@ _G.EnemyTracker =
         -- NOTE: if the nmy player picked up 50/25hps his health was below 100 / recalc armor
     end
 
-    _G.nvgFontSize(50)
-    _G.nvgText(0,0, otherPlayer.health)
-    _G.nvgText(0,40, otherPlayer.armor)
-    _G.nvgText(0,80, reflexMath.trueStack(otherPlayer))
+    nvg.fontSize(50)
+    nvg.text(0,0, otherPlayer.health)
+    nvg.text(0,40, otherPlayer.armor)
+    nvg.text(0,80, reflexMath.trueStack(otherPlayer))
 
     oldTimers = _G.pickupTimers
   end
 };
-_G.registerWidget("EnemyTracker");
+--_G.registerWidget("EnemyTracker");
