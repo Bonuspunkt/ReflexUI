@@ -1,6 +1,6 @@
 # ReflexUI
 
-## where can i download widgets
+## where can i download the widgets
 [here](https://bonuspunkt.github.io/ReflexUI)
 
 ## developing under windows
