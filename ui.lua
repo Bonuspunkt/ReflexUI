@@ -13,7 +13,7 @@ return {
   checkBox = _G.uiCheckBox,
   editBox = _G.uiEditBox,
   label = _G.uiLabel,
-  comboxBox = _G.uiComboxBox,
+  comboBox = _G.uiComboxBox,
 
   scrollSelection = _G.uiScrollSelection,
   scrollSelectionItem = _G.uiScrollSelectionItem

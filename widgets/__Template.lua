@@ -6,4 +6,4 @@ _G.__Template =
     --_G.consolePrint("drawing")
   end
 };
-_G.registerWidget("__Template");
+--_G.registerWidget("__Template");
