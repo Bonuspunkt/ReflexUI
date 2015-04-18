@@ -8,11 +8,23 @@
   font-family: sans-serif;
   color: #222;
 }
-code {
+code, .code {
   font-family: monospace;
 }
 a, a:active, a:visited {
   color: #888;
+}
+.dev {
+  padding: 3px 10px;
+
+  font-size: small;
+  border: 3px solid #800;
+  border-radius: 3px;
+  background-color: #b00;
+  color: #fff;
+}
+.update {
+  font-size: small;
 }
  </style>
 </head>
@@ -21,42 +33,91 @@ a, a:active, a:visited {
   <h2>installation</h2>
   save file to <code>&lt;steam&gt;\steamapps\common\Reflex\base\internal\ui\bonus</code>
   and then enable it ingame via <code>options</code> ⇒ <code>widgets</code>
+
   <ul>
     <li>
-      <h2><a href="output/Acceleration.lua">Acceleration</a></h2>
+      <h2>
+        <a href="output/Acceleration.lua">Acceleration</a>
+        <span class="update">last update: </span>
+      </h2>
       show the gain/loss of speed as bar
     </li>
     <li>
-      <h2><a href="output/AllPlayerStats.lua">AllPlayerStats</a></h2>
+      <h2>
+        <a href="output/AllPlayerStats.lua">AllPlayerStats</a>
+        <span class="update">last update: </span>
+      </h2>
       spec only - show the stats of all players
     </li>
     <li>
-      <h2><a href="output/ItemArrivals.lua">ItemArrivals</a></h2>
+      <h2>
+        <a href="output/Emulator.lua">Emulator</a>
+        <span class="update">last update: 2015-04-18</span>
+        <span class="dev">DEV TOOL</span>
+      </h2>
+      You can make snapshots of game states.
+      You can persist and recall them via the widget options menu.
+      Super handy for developing widgets (tdm etc)<br/>
+
+      Following properties are handled:
+      <ul class="code">
+        <li>world</li>
+        <li>clientGameState</li>
+        <li>playerIndexCameraAttachedTo</li>
+        <li>playerIndexLocalPlayer</li>
+        <li>showScores</li>
+        <li>players</li>
+        <li>pickupTimers</li>
+      </ul>
+    </li>
+    <li>
+      <h2>
+        <a href="output/ItemArrivals.lua">ItemArrivals</a>
+        <span class="update">last update: </span>
+      </h2>
       currently a bit crappy, will be way cooler when you can configure it
     </li>
     <li>
-      <h2><a href="output/JumpWindow.lua">JumpWindow</a></h2>
+      <h2>
+        <a href="output/JumpWindow.lua">JumpWindow</a>
+        <span class="update">last update: </span>
+      </h2>
       Displays the 400ms DoubleJump window visually as growing bar over time
       with a nice top and bottom black line
     </li>
     <li>
-      <h2><a href="output/MiniScores.lua">MiniScores</a></h2>
+      <h2>
+        <a href="output/MiniScores.lua">MiniScores</a>
+        <span class="update">last update: 2015-04-18</span>
+      </h2>
       mini scoreboard
     </li>
     <li>
-      <h2><a href="output/ShowKeys.lua">ShowKeys</a></h2>
+      <h2>
+        <a href="output/ShowKeys.lua">ShowKeys</a>
+        <span class="update">last update: </span>
+      </h2>
       shows the keys you are currently pressing (also works while specing)
     </li>
     <li>
-      <h2><a href="output/SpeedMeter.lua">SpeedMeter</a></h2>
+      <h2>
+        <a href="output/SpeedMeter.lua">SpeedMeter</a>
+        <span class="update">last update: </span>
+      </h2>
       shows your speed as bar
     </li>
     <li>
-      <h2><a href="output/TeamInfo.lua">TeamInfo</a></h2>
+      <h2>
+        <a href="output/TeamInfo.lua">TeamInfo</a>
+        <span class="update">last update: </span>
+      </h2>
       displays infos about all your team members
     </li>
     <li>
-      <h2><a href="output/TrueStack.lua">TrueStack</a></h2>
+      <h2>
+        <a href="output/TrueStack.lua">TrueStack</a>
+        <span class="update">last update: </span>
+      </h2>
       displays a single number how much damages it takes to take you down
     </li>
   </ul>

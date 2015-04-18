@@ -122,19 +122,23 @@ return {
   ------------------------------------------------------------------------------
   const = {
     hAlign = {
-      left = 0,
-      center = 1,
-      right = 2
+      left = _G.NVG_ALIGN_LEFT,
+      center = _G.NVG_ALIGN_CENTER,
+      right = _G.NVG_ALIGN_RIGHT
     },
     vAlign = {
-      baseline = 0,
-      top = 1,
-      middle = 2,
-      bottom = 3
+      baseline = _G.NVG_ALIGN_BASELINE,
+      top = _G.NVG_ALIGN_TOP,
+      middle = _G.NVG_ALIGN_MIDDLE,
+      bottom = _G.NVG_ALIGN_BOTTOM
     },
     solidity = {
-      solid = 1,
-      hole = 2
+      solid = _G.NVG_SOLID,
+      hole = _G.NVG_HOLE
+    },
+    winding = {
+      ccw = _G.NVG_CCW,
+      cw = _G.NVG_CW
     }
   },
 
@@ -304,19 +308,23 @@ return {
   ------------------------------------------------------------------------------
   const = {
     hAlign = {
-      left = 0,
-      center = 1,
-      right = 2
+      left = _G.NVG_ALIGN_LEFT,
+      center = _G.NVG_ALIGN_CENTER,
+      right = _G.NVG_ALIGN_RIGHT
     },
     vAlign = {
-      baseline = 0,
-      top = 1,
-      middle = 2,
-      bottom = 3
+      baseline = _G.NVG_ALIGN_BASELINE,
+      top = _G.NVG_ALIGN_TOP,
+      middle = _G.NVG_ALIGN_MIDDLE,
+      bottom = _G.NVG_ALIGN_BOTTOM
     },
     solidity = {
-      solid = 1,
-      hole = 2
+      solid = _G.NVG_SOLID,
+      hole = _G.NVG_HOLE
+    },
+    winding = {
+      ccw = _G.NVG_CCW,
+      cw = _G.NVG_CW
     }
   },
 
