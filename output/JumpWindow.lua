@@ -103,8 +103,71 @@ return {
 }
 
 end)()
+local ui = (function()
+-- inlined ../ui
+require "base/internal/ui/reflexcore"
+
+return {
+  -- stuff from reflexCore
+  window = _G.uiWindow,
+  button = _G.uiButton,
+  buttonVertical = _G.uiButtonVertical,
+  slider = _G.uiSlider,
+  progressBar = _G.uiProgressBar,
+  scrollBar = _G.uiScrollBar,
+  subHeader = _G.uiSubHeader,
+  toolTip = _G.uiToolTip,
+  checkBox = _G.uiCheckBox,
+  editBox = _G.uiEditBox,
+  label = _G.uiLabel,
+  comboBox = _G.uiComboxBox,
+
+  scrollSelection = _G.uiScrollSelection,
+  scrollSelectionItem = _G.uiScrollSelectionItem
+}
+
+end)()
+local userData = (function()
+-- inlined ../userData
+return {
+  load = _G.loadUserData,
+  save = _G.saveUserData
+}
+
+end)()
+local color = (function()
+-- inlined ../lib/color
+require "base/internal/ui/reflexcore"
+
+local lerp = function(a, b, k)
+  return a * (1 - k) + b * k;
+end
+
+local Color = _G.Color
+
+return {
+  new = function(r,g,b,a)
+    return Color(r,g,b,a)
+  end,
+
+  lerp = function(colorA, colorB, k)
+    return Color(
+      lerp(colorA.r, colorB.r, k),
+      lerp(colorA.g, colorB.g, k),
+      lerp(colorA.b, colorB.b, k),
+      lerp(colorA.a, colorB.a, k)
+    )
+  end
+}
+
+end)()
 
 local config;
+
+local function initOrFixConfig()
+  config = config or userData.load() or {}
+  if not config.width then config.width = 20 end
+end
 
 _G.JumpWindow =
 {
@@ -115,7 +178,7 @@ _G.JumpWindow =
     if not player then return end
 
     -- loading config
-    if not config then config = _G.loadUserData() or {} end
+    initOrFixConfig()
 
     -- calculating values
     local width = config.width or 20
@@ -130,31 +193,33 @@ _G.JumpWindow =
     if jumpTimer > 0 then
       nvg.beginPath()
       nvg.rect(-halfWidth, 100 - barHeight, width, barHeight)
-      nvg.fillColor(_G.Color(255,255,255));
+      nvg.fillColor(color.new(255,255,255));
       nvg.fill()
     end
 
-    nvg.fillColor(_G.Color(255,0,0));
+    nvg.strokeColor(color.new(0,0,0));
+    nvg.strokeWidth(2)
 
-    nvg.beginPath()
-    nvg.rect(-barWidth/2, -100, barWidth, 2)
-    nvg.fill()
+    nvg.beginPath();
+    nvg.moveTo(-barWidth/2, -100);
+    nvg.lineTo(barWidth/2, -100);
+    nvg.stroke();
 
-    nvg.beginPath()
-    nvg.rect(-barWidth/2, 100, barWidth, 2)
-    nvg.fill()
+    nvg.beginPath();
+    nvg.moveTo(-barWidth/2, 100);
+    nvg.lineTo(barWidth/2, 100);
+    nvg.stroke();
   end,
 
   -- option menu :D
-  drawOptions = function(self, x, y)
-    if not config then config = _G.loadUserData() or {} end
-    if not config.width then config.width = 20 end
+  drawOptions = function(_, x, y)
+    initOrFixConfig()
 
-    uiLabel("Width:", x, y);
-    config.width = math.floor(uiSlider(x + 80, y, 200, 1, 120, config.width));
-    config.width = math.floor(uiEditBox(config.width, x + 290, y, 80));
+    ui.label("Width:", x, y);
+    config.width = math.floor(ui.slider(x + 80, y, 200, 1, 120, config.width));
+    config.width = math.floor(ui.editBox(config.width, x + 290, y, 80));
 
-    saveUserData(config)
+    userData.save(config)
 
   end
 };
