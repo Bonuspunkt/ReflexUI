@@ -24,20 +24,18 @@ return function(options)
 
   local config
 
-  local function initOrFixConfig()
-    config = config or userData.load() or {}
-    if not config.width then config.width = 500 end
-    if not config.height then config.height = 100 end
-    if not config.padding then config.padding = 8 end
-    if not config.direction then config.direction = directionLTR end
-    if not config.depth then config.depth = 64 end
-    if not config.textDisplay then config.textDisplay = textLeft end
-  end
-
   return {
-    draw = function()
-      initOrFixConfig()
+    initialize = function()
+      config = config or userData.load() or {}
+      if not config.width then config.width = 500 end
+      if not config.height then config.height = 100 end
+      if not config.padding then config.padding = 8 end
+      if not config.direction then config.direction = directionLTR end
+      if not config.depth then config.depth = 64 end
+      if not config.textDisplay then config.textDisplay = textLeft end
+    end,
 
+    draw = function()
       -- Early out if HUD shouldn't be shown.
       if not _G.shouldShowHUD() then return end
 
@@ -121,8 +119,6 @@ return function(options)
     end,
 
     drawOptions = function(_, x, y)
-      initOrFixConfig()
-
       y = y + 10
 
       local sliderOffset = 80
