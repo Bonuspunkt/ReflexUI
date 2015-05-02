@@ -14,6 +14,8 @@ return {
   editBox = _G.uiEditBox,
   label = _G.uiLabel,
   comboBox = _G.uiComboxBox,
+  colorPicker = _G.uiColorPicker,
+
 
   scrollSelection = _G.uiScrollSelection,
   scrollSelectionItem = _G.uiScrollSelectionItem
