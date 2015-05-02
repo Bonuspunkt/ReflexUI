@@ -13,7 +13,7 @@ return {
   checkBox = _G.uiCheckBox,
   editBox = _G.uiEditBox,
   label = _G.uiLabel,
-  comboBox = _G.uiComboxBox,
+  comboBox = _G.uiComboBox,
   colorPicker = _G.uiColorPicker,
 
 
