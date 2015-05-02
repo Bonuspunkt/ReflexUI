@@ -9,6 +9,10 @@ local config = {}
 local circleColorState = {}
 local textColorState = {}
 
+local function round(number)
+  return math.floor(number + 0.5)
+end
+
 _G.TrueStack =
 {
 
@@ -62,7 +66,7 @@ _G.TrueStack =
       config.textColor = ui.colorPicker(x, y + 30, config.textColor, textColorState)
     end
 
-    saveUserData(config)
+    userData.save(config)
   end,
 
   getOptionsHeight = function()
