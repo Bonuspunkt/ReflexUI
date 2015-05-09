@@ -166,21 +166,27 @@ end)()
 
 local config;
 
-local function initOrFixConfig()
-  config = config or userData.load() or {}
-  if not config.width then config.width = 20 end
-end
+_G.JumpWindow = {
+  initialize = function()
+    config = config or userData.load() or {}
+    if not config.width then config.width = 20 end
+  end,
 
-_G.JumpWindow =
-{
+  drawOptions = function(_, x, y)
+
+    ui.label("Width:", x, y);
+    config.width = math.floor(ui.slider(x + 80, y, 200, 1, 120, config.width));
+    config.width = math.floor(ui.editBox(config.width, x + 290, y, 80));
+
+    userData.save(config)
+
+  end,
+
   draw = function()
 
     local player = _G.getPlayer()
 
     if not player then return end
-
-    -- loading config
-    initOrFixConfig()
 
     -- calculating values
     local width = config.width or 20
@@ -214,15 +220,5 @@ _G.JumpWindow =
   end,
 
   -- option menu :D
-  drawOptions = function(_, x, y)
-    initOrFixConfig()
-
-    ui.label("Width:", x, y);
-    config.width = math.floor(ui.slider(x + 80, y, 200, 1, 120, config.width));
-    config.width = math.floor(ui.editBox(config.width, x + 290, y, 80));
-
-    userData.save(config)
-
-  end
 };
 _G.registerWidget("JumpWindow");
