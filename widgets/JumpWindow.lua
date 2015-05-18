@@ -6,7 +6,8 @@ local color = require "../lib/color"
 
 local config;
 
-_G.JumpWindow = {
+local widgetName = "bonusJumpWindow"
+local widget = {
   initialize = function()
     config = config or userData.load() or {}
     if not config.width then config.width = 20 end
@@ -30,35 +31,36 @@ _G.JumpWindow = {
 
     -- calculating values
     local width = config.width or 20
-    local halfWidth = width/2
+    local halfWidth = width / 2
     local barWidth = width + 20
 
     -- calculate height
     local jumpTimer = player.jumpTimer
     if jumpTimer >= 400 then jumpTimer = 0 end
-    local barHeight = jumpTimer * 0.5;
+    local barHeight = jumpTimer * 0.5
 
     if jumpTimer > 0 then
       nvg.beginPath()
       nvg.rect(-halfWidth, 100 - barHeight, width, barHeight)
-      nvg.fillColor(color.new(255,255,255));
+      nvg.fillColor(color.new(255,255,255))
       nvg.fill()
     end
 
-    nvg.strokeColor(color.new(0,0,0));
+    nvg.strokeColor(color.new(0,0,0))
     nvg.strokeWidth(2)
 
-    nvg.beginPath();
-    nvg.moveTo(-barWidth/2, -100);
-    nvg.lineTo(barWidth/2, -100);
-    nvg.stroke();
+    nvg.beginPath()
+    nvg.moveTo(-barWidth/2, -100)
+    nvg.lineTo(barWidth/2, -100)
+    nvg.stroke()
 
-    nvg.beginPath();
-    nvg.moveTo(-barWidth/2, 100);
-    nvg.lineTo(barWidth/2, 100);
-    nvg.stroke();
+    nvg.beginPath()
+    nvg.moveTo(-barWidth/2, 100)
+    nvg.lineTo(barWidth/2, 100)
+    nvg.stroke()
   end,
 
-  -- option menu :D
 };
-_G.registerWidget("JumpWindow");
+
+_G[widgetName] = widget
+_G.registerWidget(widgetName)

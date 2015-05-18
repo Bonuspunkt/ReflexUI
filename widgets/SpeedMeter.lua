@@ -15,7 +15,8 @@ local barHeight = 48
 
 local textColor = color.new(255,255,255,255);
 
-_G.SpeedMeter =
+local widgetName = "bonusSpeedMeter"
+local widget =
 {
   draw = function()
     -- Early out if HUD shouldn't be shown.
@@ -62,4 +63,6 @@ _G.SpeedMeter =
     nvg.text(0, 0, math.floor(speed));
   end
 };
-_G.registerWidget("SpeedMeter");
+
+_G[widgetName] = widget
+_G.registerWidget(widgetName);

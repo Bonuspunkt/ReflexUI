@@ -4,7 +4,7 @@ local icons = require "base/internal/ui/bonus/lib/icons"
 local nvg = require "base/internal/ui/bonus/nvg"
 local const = require "base/internal/ui/bonus/const"
 
-_G.TeamInfo =
+_G.bonusTeamInfo =
 {
   draw = function()
 
@@ -80,4 +80,4 @@ _G.TeamInfo =
   end
 };
 
-_G.registerWidget("TeamInfo");
+_G.registerWidget("bonusTeamInfo");

@@ -6,46 +6,70 @@ local userData = require "../userData"
 local color = require "../lib/color"
 local funcArray = require "../lib/funcArray"
 
-local widgetName = "MiniScores"
 local ORIENTATION_HORZ = "Horizontal"
 local ORIENTATION_VERT = "Vertical"
 local orientations = { ORIENTATION_HORZ, ORIENTATION_VERT }
+
 local orientationState = {}
+local ourColorState = {}
+local diffColorState = {}
+local theirColorState = {}
 local config
 
-local function initOrFixConfig()
-  if not config then config = userData.load() or {} end
+local widgetName = "bonusMiniScores"
+local widget = {
 
-  if not config.ourColor then config.ourColor = color.new(64,64,255,64) end
-  if not config.diffColor then config.diffColor = color.new(255,255,255,64) end
-  if not config.theirColor then config.theirColor = color.new(255,64,64,64) end
-  if not config.orientation then config.orientation = ORIENTATION_HORZ end
-end
+  initialize = function()
+    if not config then config = userData.load() or {} end
 
-local function drawColorSliders(x, y, label, table, property)
+    if not config.ourColor then config.ourColor = color.new(64,64,255,64) end
+    if not config.diffColor then config.diffColor = color.new(255,255,255,64) end
+    if not config.theirColor then config.theirColor = color.new(255,64,64,64) end
+    if not config.orientation then config.orientation = ORIENTATION_HORZ end
+  end,
 
-  ui.label(label, x, y+30);
+  drawOptions = function(_, x, y)
 
-  table[property].r = ui.slider(x + 120, y+0,  255, 0, 255, table[property].r)
-  table[property].g = ui.slider(x + 120, y+20, 255, 0, 255, table[property].g)
-  table[property].b = ui.slider(x + 120, y+40, 255, 0, 255, table[property].b)
-  table[property].a = ui.slider(x + 120, y+60, 255, 0, 255, table[property].a)
+    ui.label("Orientation", x, y)
+    local comboX = x + 120
+    local comboY = y
+    y = y + 40
 
-  nvg.beginPath()
-  nvg.rect(x + 400, y, 100, 90)
-  nvg.fillColor(table[property])
-  nvg.fill()
-end
+    ui.label("Your Score", x, y)
+    config.ourColor = ui.colorPicker(x, y + 30, config.ourColor, ourColorState)
+    y = y + 260
 
+    -- we draw he comboBox after the sliders, because the comboBox dropdown
+    -- must be drawn over the sliders
+    config.orientation = ui.comboBox(orientations, config.orientation, comboX, comboY, 255, orientationState)
 
-local MiniScores = {
+    config.showDiff = ui.checkBox(config.showDiff or false, "Show Diff", x, y)
+    y = y + 30
+
+    if config.showDiff then
+      ui.label("Score difference", x, y)
+      config.diffColor = ui.colorPicker(x, y + 30, config.diffColor, diffColorState)
+      y = y + 260
+    end
+
+    ui.label("Other Score", x, y)
+    config.theirColor = ui.colorPicker(x, y + 30, config.theirColor, theirColorState)
+
+    userData.save(config);
+  end,
+
+  getOptionsHeight = function()
+    local result = 600
+    if config.showDiff then
+      result = result + 270
+    end
+    return result
+  end,
 
   draw = function()
 
     -- Early out if HUD should not be shown.
     if not _G.shouldShowHUD() then return end;
-
-    initOrFixConfig()
 
     -- Find player
     local player = _G.getPlayer()
@@ -134,36 +158,8 @@ local MiniScores = {
     -- their score
     drawScore(config.theirColor, theirScore)
     step()
-  end,
-
-  drawOptions = function(_, x, y)
-    initOrFixConfig()
-
-    ui.label("Orientation", x, y)
-    local comboX = x + 120
-    local comboY = y
-    y = y + 40
-
-    drawColorSliders(x, y, "Your Score", config, "ourColor")
-
-    -- we draw he comboBox after the sliders, because the comboBox dropdown
-    -- must be drawn over the sliders
-    config.orientation = ui.comboBox(orientations, config.orientation, comboX, comboY, 255, orientationState)
-    y = y + 90
-
-    config.showDiff = ui.checkBox(config.showDiff or false, "Show Diff", x, y)
-    y = y + 30
-
-    if config.showDiff then
-      drawColorSliders(x, y, "Score Diff", config, "diffColor")
-      y = y + 90
-    end
-
-    drawColorSliders(x, y, "Other Score", config, "theirColor")
-
-    userData.save(config);
   end
 };
 
-_G[widgetName] = MiniScores;
+_G[widgetName] = widget;
 _G.registerWidget(widgetName);

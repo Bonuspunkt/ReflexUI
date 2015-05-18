@@ -13,7 +13,8 @@ local oldSpeed = 0
 
 local avg = averager(averageDuration)
 
-_G.Acceleration =
+local widgetName = "bonusAcceleration"
+local widget =
 {
   draw = function()
 
@@ -31,7 +32,7 @@ _G.Acceleration =
 
     local barWidth = deltaSpeed * multiplier;
 
-    nvg.beginPath();
+    nvg.beginPath()
 
 
     if deltaSpeed > 0 then
@@ -41,7 +42,7 @@ _G.Acceleration =
         barWidth,
         barHeight,
         2
-      );
+      )
     elseif deltaSpeed < 0 then
       nvg.roundedRect(
         barWidth,
@@ -49,14 +50,15 @@ _G.Acceleration =
         -barWidth,
         barHeight,
         2
-      );
+      )
     end
 
-    nvg.fillColor(barColor);
+    nvg.fillColor(barColor)
     nvg.fill()
 
-    oldSpeed = speed;
+    oldSpeed = speed
   end
 };
 
-_G.registerWidget("Acceleration");
+_G[widgetName] = widget
+_G.registerWidget(widgetName)

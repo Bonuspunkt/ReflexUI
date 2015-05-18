@@ -13,7 +13,8 @@ local function round(number)
   return math.floor(number + 0.5)
 end
 
-_G.TrueStack =
+local widgetName = "bonusTrueStack"
+local widget =
 {
 
   initialize = function()
@@ -123,4 +124,6 @@ _G.TrueStack =
 
   end
 };
-_G.registerWidget("TrueStack");
+
+_G[widgetName] = widget;
+_G.registerWidget(widgetName);

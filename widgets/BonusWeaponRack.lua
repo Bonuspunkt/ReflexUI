@@ -4,13 +4,16 @@ local userData = require "../userData"
 local ui = require "../ui"
 local color = require "../lib/color"
 
+local grey = color.new(128,128,128)
+
 local config
 
 local function round(number)
   return math.floor(number + 0.5)
 end
 
-_G.BonusWeaponRack = {
+local widgetName = "bonusWeaponRack"
+local widget = {
   initialize = function()
     config = userData.load() or {};
     if not config.hideMelee then config.hideMelee = false end
@@ -80,12 +83,11 @@ _G.BonusWeaponRack = {
 
       local weapon = player.weapons[weaponIndex];
       local weaponColor = weapon.color;
+      local textColor = color.new(255,255,255)
 
       -- if we havent picked up the weapon, colour it grey
       if not weapon.pickedup then
-        color.r = 128;
-        color.g = 128;
-        color.b = 128;
+        color = grey
       end
 
       local backgroundColor = color.new(0,0,0,65)
@@ -125,7 +127,10 @@ _G.BonusWeaponRack = {
         iconY = weaponY + (config.weaponHeight / 2);
       end
 
-      if weaponIndex == player.weaponIndexSelected then
+      if weapon.ammo == 0 then
+        iconColor = grey
+        textColor = grey
+      elseif weaponIndex == player.weaponIndexSelected then
         iconColor.r = _G.lerp(iconColor.r, 255, player.weaponSelectionIntensity);
         iconColor.g = _G.lerp(iconColor.g, 255, player.weaponSelectionIntensity);
         iconColor.b = _G.lerp(iconColor.b, 255, player.weaponSelectionIntensity);
@@ -151,7 +156,7 @@ _G.BonusWeaponRack = {
       nvg.textAlign(nvg.const.hAlign.center, nvg.const.vAlign.top);
 
       nvg.fontBlur(0);
-      nvg.fillColor(color.new(255,255,255));
+      nvg.fillColor(textColor);
       nvg.text(ammoX, weaponY, ammoCount);
 
       if config.verticalRack then
@@ -162,4 +167,6 @@ _G.BonusWeaponRack = {
     end
   end
 };
-_G.registerWidget("BonusWeaponRack");
+
+_G[widgetName] = widget;
+_G.registerWidget(widgetName);

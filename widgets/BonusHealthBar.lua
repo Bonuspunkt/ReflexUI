@@ -1,10 +1,10 @@
 local color = require "../lib/color"
 local barFactory = require "./barFactory"
 
-local widgetName = "BonusHealthBar"
+local widgetName = "bonusHealthBar"
 local barAlpha = 160;
 
-local BonusHealthBar = barFactory({
+local widget = barFactory({
 
   name = widgetName,
   getValue = function(player)
@@ -20,5 +20,5 @@ local BonusHealthBar = barFactory({
   end
 })
 
-_G[widgetName] = BonusHealthBar
+_G[widgetName] = widget
 _G.registerWidget(widgetName)
