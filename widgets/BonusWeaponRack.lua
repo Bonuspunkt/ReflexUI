@@ -87,7 +87,8 @@ local widget = {
 
       -- if we havent picked up the weapon, colour it grey
       if not weapon.pickedup then
-        color = grey
+        textColor = grey
+        iconColor = grey
       end
 
       local backgroundColor = color.new(0,0,0,65)
@@ -130,6 +131,10 @@ local widget = {
       if weapon.ammo == 0 then
         iconColor = grey
         textColor = grey
+      elseif weapon.ammo <= weapon.lowAmmoWarning then
+        textColor = color.new(255, 0, 0)
+      elseif weapon.ammo <= 2 * weapon.lowAmmoWarning then
+        textColor = color.new(255, 255, 0)
       elseif weaponIndex == player.weaponIndexSelected then
         iconColor.r = _G.lerp(iconColor.r, 255, player.weaponSelectionIntensity);
         iconColor.g = _G.lerp(iconColor.g, 255, player.weaponSelectionIntensity);
@@ -150,7 +155,6 @@ local widget = {
       end
 
       if weaponIndex == 1 then ammoCount = "-" end
-
       nvg.fontSize(config.weaponHeight);
       nvg.fontFace("TitilliumWeb-Bold");
       nvg.textAlign(nvg.const.hAlign.center, nvg.const.vAlign.top);
