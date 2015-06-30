@@ -1,9 +1,12 @@
 --require "base/internal/ui/reflexcore"
 
-_G.__Template =
-{
+local widgetName = "__Template"
+local widget = {
   draw = function()
     --_G.consolePrint("drawing")
   end
 };
---_G.registerWidget("__Template");
+
+
+--_G[widgetName] = widget
+--_G.registerWidget(widgetName);
