@@ -5,16 +5,38 @@ local ui = require "../ui"
 local userData = require "../userData"
 local color = require "../lib/color"
 local funcArray = require "../lib/funcArray"
+local position = require "../lib/position"
 
 local ORIENTATION_HORZ = "Horizontal"
 local ORIENTATION_VERT = "Vertical"
-local orientations = { ORIENTATION_HORZ, ORIENTATION_VERT }
 
-local orientationState = {}
+local TEXT_LEFT = "Left"
+local TEXT_CENTER = "Center"
+local TEXT_RIGHT = "Right"
+local textAlign = { TEXT_LEFT, TEXT_CENTER, TEXT_RIGHT }
+
+local textAlignState = {}
 local ourColorState = {}
 local diffColorState = {}
 local theirColorState = {}
 local config
+
+local function formatRaceScore(score)
+
+  if score == 0 then return 'dnf' end
+
+  local ms = score % 1000;
+	score = math.floor(score / 1000);
+	local seconds = score % 60;
+	score = math.floor(score / 60);
+	local minutes = score % 60;
+
+  if minutes > 0 then
+	  return string.format("%d:%02d.%03d", minutes, seconds, ms)
+  else
+    return string.format("%d.%03d", seconds, ms)
+  end
+end
 
 local widgetName = "bonusMiniScores"
 local widget = {
@@ -26,22 +48,22 @@ local widget = {
     if not config.diffColor then config.diffColor = color.new(255,255,255,64) end
     if not config.theirColor then config.theirColor = color.new(255,64,64,64) end
     if not config.orientation then config.orientation = ORIENTATION_HORZ end
+    if not config.textAlign then config.textAlign = TEXT_CENTER end
   end,
 
   drawOptions = function(_, x, y)
 
-    ui.label("Orientation", x, y)
-    local comboX = x + 120
-    local comboY = y
+    ui.label("Text align", x, y)
+    config.textAlign = ui.comboBox(textAlign, config.textAlign, x + 120, y, 255, textAlignState)
+    y = y + 40
+
+    config.orientation = ui.checkBox(config.orientation == ORIENTATION_VERT, "Vertical", x, y) and ORIENTATION_VERT or ORIENTATION_HORZ
     y = y + 40
 
     ui.label("Your Score", x, y)
     config.ourColor = ui.colorPicker(x, y + 30, config.ourColor, ourColorState)
     y = y + 260
 
-    -- we draw he comboBox after the sliders, because the comboBox dropdown
-    -- must be drawn over the sliders
-    config.orientation = ui.comboBox(orientations, config.orientation, comboX, comboY, 255, orientationState)
 
     config.showDiff = ui.checkBox(config.showDiff or false, "Show Diff", x, y)
     y = y + 30
@@ -69,7 +91,7 @@ local widget = {
   draw = function()
 
     -- Early out if HUD should not be shown.
-    if not _G.shouldShowHUD() then return end;
+    if not _G.shouldShowHUD() then return end
 
     -- Find player
     local player = _G.getPlayer()
@@ -86,9 +108,12 @@ local widget = {
       end
     )
 
-    local ourScore = 0;
-    local theirScore = 0;
-    local gameMode = _G.gamemodes[_G.world.gameModeIndex].shortName;
+    local ourScore;
+    local theirScore;
+    local boundText = "-888"
+    local formatScore = function(score) return score end
+    local formatDiff = function(diff) return diff end
+    local gameMode = _G.gamemodes[_G.world.gameModeIndex].shortName
 
     if gameMode == "tdm" or gameMode == "atdm" then
       ourScore = activePlayers
@@ -113,18 +138,45 @@ local widget = {
         .filter(function(p) return player ~= p; end)
         .map(function(p) return p.score; end)
         .reduce(function(prev, curr) return math.max(prev, curr) end, 0)
+
+    elseif gameMode == "race" then
+      ourScore = player.score;
+      theirScore = activePlayers
+        .filter(function(p) return player ~= p; end)
+        .map(function(p) return p.score; end)
+        .reduce(function(prev, curr) return math.min(prev, curr) end, 999999)
+
+      boundText = "+00:00.000"
+      formatDiff = function (diff)
+        if diff > 0 then
+          return "+" .. formatScore(diff)
+        else
+          return "-" .. formatScore(-diff)
+        end
+      end
+      formatScore = formatRaceScore;
+    else
+      -- NOTE: not supported yet
+      return
     end
 
     -- calculate positions
     nvg.fontSize(64);
-    local size = nvg.textBounds("-888")
+    local size = nvg.textBounds(boundText)
     local padding = 5
     local width = (size.maxx - size.minx) + 2 * padding
-    local height = (size.maxy - size.miny) -- height is way off so no need for padding XD
+    local height = (size.maxy - size.miny) -- height is off so no need for padding
 
     local count = config.showDiff and 3 or 2
-    local x = -width * count / 2
-    local y = 0
+    local totalWidth = width
+    local totalHeight = height
+    if config.orientation == ORIENTATION_HORZ then
+      totalWidth = count * width
+    else
+      totalHeight = count * height
+    end
+
+    local x, y = position(widgetName, totalWidth, totalHeight)
 
     -- some helpers
     local function step()
@@ -142,24 +194,33 @@ local widget = {
       nvg.fill();
 
       nvg.fillColor(textColor);
-      nvg.text(x + width/2, y + height / 2, text);
+      if config.textAlign == TEXT_LEFT then
+        nvg.textAlign(nvg.const.hAlign.left, nvg.const.vAlign.middle)
+        nvg.text(x + padding, y + height / 2, text)
+      elseif config.textAlign == TEXT_CENTER then
+        nvg.textAlign(nvg.const.hAlign.center, nvg.const.vAlign.middle)
+        nvg.text(x + width/2, y + height / 2, text)
+      elseif config.textAlign == TEXT_RIGHT then
+        nvg.textAlign(nvg.const.hAlign.right, nvg.const.vAlign.middle)
+        nvg.text(x + width - padding, y + height / 2, text)
+      end
     end
 
     -- our score
-    drawScore(config.ourColor, ourScore)
+    drawScore(config.ourColor, formatScore(ourScore))
     step()
 
     -- difference
     if config.showDiff then
-      drawScore(config.diffColor, ourScore - theirScore)
+      drawScore(config.diffColor, formatDiff(ourScore - theirScore))
       step()
     end
 
     -- their score
-    drawScore(config.theirColor, theirScore)
+    drawScore(config.theirColor, formatScore(theirScore))
     step()
   end
-};
+}
 
-_G[widgetName] = widget;
-_G.registerWidget(widgetName);
+_G[widgetName] = widget
+_G.registerWidget(widgetName)
